@@ -6,6 +6,4 @@
 - `retrieval_node/`：检索节点召回效果（不同 TopK/阈值）
 - `llm_answer/`：LLM 生成答案效果
 
-每个子文件夹内：
-- `summary.json`：总的效果对比
-- `example_1.json` / `example_2.json`：两个具体示例
+每个子文件夹内：具体示例
