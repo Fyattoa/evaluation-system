@@ -1,0 +1,251 @@
+{
+  "overall": {
+    "final_weighted_score": 7.60,
+    "final_weighted_score_calculation": "0.15 * 4.3 + 0.35 * 7.0 + 0.25 * 9.0 + 0.25 * 9.0 = 7.60",
+    "overall_average_score": 6.1,
+    "relevance_avg": 4.3,
+    "total_part_completeness_avg": 2.0,
+    "total_question_coverage_avg": 7.0,
+    "accuracy_avg": 9.0,
+    "faithfulness_avg": 9.0,
+    "overall_summary": "整体评估总结：\n  - 最终加权得分为7.60分。计算过程：相关性平均(4.3)权重0.15 + 问题级完整性平均(7.0)权重0.35 + 准确性平均(9.0)权重0.25 + 忠实度平均(9.0)权重0.25 = 7.60。\n  - 各维度表现：相关性平均为4.3（较差，噪声较多），片段级完整性平均为2.0（极低），问题级完整性平均为7.0（良好），准确性平均为9.0（优秀），忠实度平均为9.0（优秀）。\n  - 片段级完整性平均与问题级完整性平均的对比：片段级完整性平均极低(2.0)，但问题级完整性平均尚可(7.0)，说明知识库切片较碎且单个片段信息密度低，核心信息散落在多个不同片段中。虽然大部分召回片段缺乏直接价值，但综合少数几个高质量片段后，仍能较好覆盖问题的核心答案。\n  - 各问题的典型问题模式：检索策略对“理念/优点”类抽象问题存在偏移，大量召回了功能操作描述（如阅读七选五、每日复习）或公司历程等无关背景信息，导致相关性得分普遍偏低。\n  - 主要强弱项：强项在于系统对原文的忠实度和准确性极高，几乎不存在编造或曲解；弱项在于检索精度不足，无关片段占比过高，且对于需要罗列多个要点的问题（如问题2），细节内容召回严重缺失。\n  - 整体召回覆盖度表现：问题1因有一个精准命中核心的父段而获得高覆盖度(9分)；问题2仅召回了要点标题和1-2个具体阐述，导致覆盖度不足(5分)，整体覆盖度表现分化。\n  - 改进建议：1. 优化语义检索模型，提升对抽象概念（如“理念”、“优点”）与具体阐述段落之间的映射能力；2. 调整Chunk切分策略，确保包含标题及其对应详细内容的完整性，避免仅召回目录或孤立功能描述；3. 引入重排机制，过滤掉功能操作等明显不相关的背景噪声。"
+  },
+  "questions": [
+    {
+      "question_id": 1,
+      "question_text": "爱优读智能英语学习系统采用了哪种词汇理念来帮助学生高效学习词汇？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "sub_chunk_id": "C-11",
+          "parent_chunk_id": "Chunk 15",
+          "scores": {
+            "relevance_score": 4,
+            "completeness_score": 1,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 5.8
+          },
+          "reasoning": "合并文本主要介绍阅读七选五、完形填空和阅读强化训练的操作逻辑，与词汇理念几乎无关，无关内容占比>50%；未覆盖高频词汇理念的任何关键信息点；文本忠实于原文且无事实错误。"
+        },
+        {
+          "part_id": "part_2",
+          "sub_chunk_id": "C-19",
+          "parent_chunk_id": "Chunk 12",
+          "scores": {
+            "relevance_score": 5,
+            "completeness_score": 2,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 6.3
+          },
+          "reasoning": "文本主要关于同步全词汇和单词速记，虽在单词速记部分提到'从高频词到低频逐个学习'，但未点明系统的核心'高频词汇'理念来源和具体建立逻辑，相关性约30%；覆盖极少量信息；无编造。"
+        },
+        {
+          "part_id": "part_3",
+          "sub_chunk_id": "C-23",
+          "parent_chunk_id": "Chunk 9",
+          "scores": {
+            "relevance_score": 8,
+            "completeness_score": 9,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 8.8
+          },
+          "reasoning": "该片段精准命中关键信息，明确指出系统采用'高频词汇'理念，并详细解释了1.18亿语料库来源、按出现频率排列的逻辑及结合个人数据的效果，相关性高，覆盖了绝大部分关键点。"
+        },
+        {
+          "part_id": "part_4",
+          "sub_chunk_id": "C-1",
+          "parent_chunk_id": "Chunk 7",
+          "scores": {
+            "relevance_score": 1,
+            "completeness_score": 1,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 5.0
+          },
+          "reasoning": "内容为公司发展历程、获奖情况及规模介绍，完全无关词汇理念；零覆盖；文本准确无误。"
+        },
+        {
+          "part_id": "part_5",
+          "sub_chunk_id": "C-7",
+          "parent_chunk_id": "Chunk 13",
+          "scores": {
+            "relevance_score": 4,
+            "completeness_score": 1,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 5.8
+          },
+          "reasoning": "内容关于每日复习机制和词根词缀功能，属于词汇学习手段而非核心理念，相关性低；未覆盖核心理念点；文本准确。"
+        },
+        {
+          "part_id": "part_6",
+          "sub_chunk_id": "C-25",
+          "parent_chunk_id": "Chunk 11",
+          "scores": {
+            "relevance_score": 6,
+            "completeness_score": 2,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 6.5
+          },
+          "reasoning": "介绍精准读和同步全词汇，提及'提供当下阅读材料中应该学习的高频词汇'，但核心是阅读应用而非词汇理念本身，相关性约40%；少量覆盖；无错误。"
+        },
+        {
+          "part_id": "part_7",
+          "sub_chunk_id": "C-17",
+          "parent_chunk_id": "Chunk 16",
+          "scores": {
+            "relevance_score": 1,
+            "completeness_score": 1,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 5.0
+          },
+          "reasoning": "内容为补全对话和分级阅读的具体操作描述，与词汇理念无关；零覆盖；文本准确。"
+        }
+      ],
+      "question_average_score": 6.2,
+      "relevance_avg": 4.1,
+      "part_completeness_avg": 2.4,
+      "accuracy_avg": 9.0,
+      "faithfulness_avg": 9.0,
+      "overall_coverage_score": 9,
+      "overall_coverage_reasoning": "问题1期望关键点：1.采用'高频词汇'理念；2.基于1.18亿语料库及真题试卷；3.按词汇出现频率排列；4.结合个人数据优先学习高频词；5.目标'考什么学什么'。综合所有片段，Part 3 (C-23+Chunk9) 完整覆盖了点1、2、3、4，点5虽未原话提及但逻辑已蕴含，仅有极微小细节遗漏，覆盖度>90%。",
+      "question_summary": "问题1的召回表现分化严重。最优的Part 3精准命中核心解答，大幅拉高了问题级完整性；但最差的Part 4和Part 7完全偏离主题，拉低了整体相关性平均（仅4.1）。片段级完整性极低（2.4），说明大部分召回是无效噪声，仅在综合时才能拼凑出完整答案。整体覆盖度优秀，得益于那一个高质量的父段Chunk 9。"
+    },
+    {
+      "question_id": 2,
+      "question_text": "爱优读智能英语的优点有哪些？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "sub_chunk_id": "C-2",
+          "parent_chunk_id": "Chunk 26",
+          "scores": {
+            "relevance_score": 9,
+            "completeness_score": 2,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 7.3
+          },
+          "reasoning": "文本直接对应'五、爱优读智能英语的优点'，并详细展开了第1点'全系列英语学习系统'，相关性极高；但仅覆盖7大优点中的1个，覆盖率约15%；内容准确忠实。"
+        },
+        {
+          "part_id": "part_2",
+          "sub_chunk_id": "C-13",
+          "parent_chunk_id": "Chunk 2",
+          "scores": {
+            "relevance_score": 8,
+            "completeness_score": 4,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 7.5
+          },
+          "reasoning": "为目录页，列出了7大优点的完整标题，无具体内容，高度相关且提供了骨架，覆盖率达30%（标题级别）；准确无误。"
+        },
+        {
+          "part_id": "part_3",
+          "sub_chunk_id": "C-2",
+          "parent_chunk_id": "Chunk 24",
+          "scores": {
+            "relevance_score": 6,
+            "completeness_score": 1,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 6.3
+          },
+          "reasoning": "内容为'爱优读智能英语理念'的总体概述，与优点有交集但不直接回答问题，属于支撑性上下文，相关性约40%；几乎未直接覆盖优点的列举；文本准确。"
+        },
+        {
+          "part_id": "part_4",
+          "sub_chunk_id": "C-2",
+          "parent_chunk_id": "Chunk 6",
+          "scores": {
+            "relevance_score": 4,
+            "completeness_score": 1,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 5.8
+          },
+          "reasoning": "系统功能总体介绍，与具体优点不属于同一层面，相关性约20%；未覆盖优点关键信息；文本准确。"
+        },
+        {
+          "part_id": "part_5",
+          "sub_chunk_id": "C-5",
+          "parent_chunk_id": "Chunk 8",
+          "scores": {
+            "relevance_score": 4,
+            "completeness_score": 1,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 5.8
+          },
+          "reasoning": "功能版块介绍，属于功能描述而非优点总结，相关性低；无覆盖；文本准确。"
+        },
+        {
+          "part_id": "part_6",
+          "sub_chunk_id": "C-1",
+          "parent_chunk_id": "Chunk 7",
+          "scores": {
+            "relevance_score": 1,
+            "completeness_score": 1,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 5.0
+          },
+          "reasoning": "公司发展历程，完全无关；零覆盖；准确。"
+        },
+        {
+          "part_id": "part_7",
+          "sub_chunk_id": "C-25",
+          "parent_chunk_id": "Chunk 11",
+          "scores": {
+            "relevance_score": 1,
+            "completeness_score": 1,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 5.0
+          },
+          "reasoning": "词汇学习方式，无关优点列举；零覆盖；准确。"
+        },
+        {
+          "part_id": "part_8",
+          "sub_chunk_id": "C-27",
+          "parent_chunk_id": "Chunk 25",
+          "scores": {
+            "relevance_score": 6,
+            "completeness_score": 2,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 6.5
+          },
+          "reasoning": "理念部分，提到了各版块对成绩的影响占比，并且Chunk 25包含了第二个优点'因材施教'的标题及部分解释，可视为优点的佐证与部分覆盖，相关性约40%；少量覆盖；准确。"
+        },
+        {
+          "part_id": "part_9",
+          "sub_chunk_id": "C-17",
+          "parent_chunk_id": "Chunk 16",
+          "scores": {
+            "relevance_score": 1,
+            "completeness_score": 1,
+            "accuracy_score": 9,
+            "faithfulness_score": 9,
+            "part_total": 5.0
+          },
+          "reasoning": "阅读训练操作，无关优点；零覆盖；准确。"
+        }
+      ],
+      "question_average_score": 6.0,
+      "relevance_avg": 4.4,
+      "part_completeness_avg": 1.6,
+      "accuracy_avg": 9.0,
+      "faithfulness_avg": 9.0,
+      "overall_coverage_score": 5,
+      "overall_coverage_reasoning": "问题2期望的关键点为7个优点的具体内容（1.全系列；2.因材施教；3.高频词汇植入；4.以阅读为核心；5.多维度听说；6.人机交互；7.英语专属）。召回的Part 2包含了7个优点的标题，Part 1详细覆盖了第1点，Part 8部分覆盖了第2点，其余5个优点的具体阐述内容完全缺失。综合覆盖比例约为30-40%，存在严重的核心信息缺失。",
+      "question_summary": "问题2是本次评估的薄弱环节。虽然召回了包含目录的片段（Part 2）和详细阐述第一个优点的片段（Part 1），使得相关性略高于问题1，但片段级完整性极低（1.6），因为大部分片段是理念概述、功能介绍或公司历程等无关噪声。最关键的是，7大优点中只有1个被详细召回，1个被部分召回，其余5个仅存在标题，导致问题级整体覆盖度评分仅为5分，存在严重的核心信息缺失。"
+    }
+  ]
+}

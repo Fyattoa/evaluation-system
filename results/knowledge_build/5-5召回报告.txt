@@ -1,0 +1,766 @@
+{
+  "overall": {
+    "weighted_overall_score": 8.0,
+    "weighted_calculation": "0.15 * 4.8 + 0.35 * 7.9 + 0.25 * 9.0 + 0.25 * 9.0 = 7.985 ≈ 8.0",
+    "simple_overall_score": 7.7,
+    "simple_calculation": "0.25 * 4.8 + 0.25 * 7.9 + 0.25 * 9.0 + 0.25 * 9.0 = 7.675 ≈ 7.7",
+    "avg_part_total_score": 5.6,
+    "avg_relevance": 4.8,
+    "avg_part_completeness": 3.9,
+    "avg_merged_completeness": 7.9,
+    "avg_accuracy": 9.0,
+    "avg_faithfulness": 9.0,
+    "summary": "整体评估总结：\n  - 最终加权得分（作为全局平均分）为 8.0 分，计算过程：0.15 * 4.8 (相关性) + 0.35 * 7.9 (问题级完整性) + 0.25 * 9.0 (准确性) + 0.25 * 9.0 (忠实度) = 8.0。该分数属良好水平，主要得益于极高的准确性和问题级完整性，但相关性偏低拖累了总分。\n  - 不加权得分及计算过程：0.25 * 4.8 + 0.25 * 7.9 + 0.25 * 9.0 + 0.25 * 9.0 = 7.7 分。\n  - 各维度表现：相关性平均 4.8（中等偏下，存在较多目录及跨版块噪声）；片段级完整性平均 3.9（较低，单切片信息点较少）；问题级完整性平均 7.9（良好，多数问题能通过多片段拼接较好覆盖）；准确性平均 9.0；忠实度平均 9.0。\n  - 片段级完整性平均与合并后完整性平均的对比：片段级完整性（3.9）显著低于问题级完整性（7.9），说明知识点较为分散，单个chunk信息密度不足，必须依赖多个chunk组装来还原答案，检索效率有待提升。\n  - 各问题的典型问题模式：1. 条件性检索严重失效：问题8（“水平极低”）完全未召回单词速记版块的关键信息，而是召回了大量写作、语法等无关版块，导致该题覆盖度极低（3分）；2. 长列表覆盖不足：问题2（“优点”）因切片截断和召回不全，遗漏了优点4、5的详细内容；3. 目录页噪声常态：Chunk 2、4（目录）和Chunk 15（版块总述）频繁出现，拉低相关性。\n  - 主要强弱项：强项在于准确性和忠实度极高，无幻觉事实；弱项在于语义检索精准度不足，对特定条件（如极低水平）检索能力弱，且目录页噪声大。\n  - 整体召回覆盖度表现：整体覆盖度表现良好（7.9分），但问题8（3分）和问题2（6分）的严重不足拉低了整体水平，其余问题覆盖度较好。",
+    "optimization_suggestions": "基于历史优化记录，当前配置（Top K 7，阈值0.3）的表现（加权8.0，相关性4.8，问题级完整性7.9）**不如历史记录5-4**（Top K 7，阈值0.5，加权8.7，相关性5.5，问题级完整性8.3）。降低阈值至0.3并未提升完整性，反而引入更多噪声，导致相关性和问题级完整性双降，特别是问题8的召回完全失败。当前参数并非最优，建议5-4的配置更优。\n\n具体优化建议：\n1. **问题诊断**：问题8（对于英语水平极低...）召回完全失败，系统未能识别“水平极低”指向“单词速记版块”，反而召回大量写作、语法等无关版块内容，导致该题问题级完整性仅3分。\n   **改进方向**：引入混合检索，增加关键词匹配权重。对于“单词速记”、“水平极低”、“中高考”等专有名词和条件，关键词检索比纯语义更精准，能有效避免语义漂移。\n   **预期效果**：精准召回目标版块内容，预计问题8的问题级完整性提升至8分以上，整体问题级完整性提升至8.3以上。\n\n2. **问题诊断**：相关性平均分4.8，低于历史最优5.5，阈值0.3导致过多低置信度噪声（如目录页、无关版块详情）被召回，挤压了有效内容空间。\n   **改进方向**：提高Rerank相关性阈值至0.5（恢复为5-4配置）。在保持Top K=7的前提下，通过更高的阈值过滤掉低相关度的噪声chunk，确保召回质量。\n   **预期效果**：相关性平均分预计回升至5.5-6.0，减少无用Token消耗，同时不影响核心信息的覆盖。\n\n3. **问题诊断**：长列表内容（如问题2的“七大优点”）召回不全，缺失优点4、5的详细内容，导致问题级完整性仅6分。Top K=7可能不足以覆盖分散在多个chunk中的7个优点。\n   **改进方向**：适当增加Top K至8，或在Rerank后保留Top 8，为长列表类问题提供更多的内容拼图机会。\n   **预期效果**：提升长列表类问题的覆盖度，预计问题2的问题级完整性提升至7-8分。\n\n4. **问题诊断**：片段级完整性平均仅3.9，说明信息被过度切碎，单个chunk信息密度低，检索效率不高。\n   **改进方向**：在分块策略上，尝试增加分段重叠度（如从150提升至200），使得关键信息点更有可能完整地出现在单个chunk中，减少上下文断裂。\n   **预期效果**：提升片段级完整性平均至4.5左右，降低对多片段组装的依赖度。\n\n**最优先尝试方案**：立即恢复为历史5-4的检索配置（Top K 7，阈值0.5），并在此基础上引入混合检索以解决条件性检索失效问题（问题8）。这是成本最低且见效最快的方案，可直接验证混合检索对特定问题的提升效果。"
+  },
+  "questions": [
+    {
+      "q_id": 1,
+      "question": "爱优读智能英语学习系统包含哪些主要学习版块？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk_15",
+          "scores": {
+            "relevance": 9,
+            "completeness": 8,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.8
+          },
+          "reason": "直接列出六大版块和三十三项模块，高度相关且覆盖主要信息点，事实准确无编造。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk_2",
+          "scores": {
+            "relevance": 6,
+            "completeness": 6,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.5
+          },
+          "reason": "目录页列出五大版块名称，有相关性但无实质内容，提供部分版块名称。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk_32",
+          "scores": {
+            "relevance": 5,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.0
+          },
+          "reason": "讨论版块对成绩的影响占比，提及词汇、阅读等，但未回答系统包含哪些版块，相关性中等。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk_12",
+          "scores": {
+            "relevance": 9,
+            "completeness": 8,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.8
+          },
+          "reason": "系统介绍中列出所有模块，与问题高度相关，覆盖完整，无错误。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk_33",
+          "scores": {
+            "relevance": 6,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.3
+          },
+          "reason": "优点介绍中提及版块概念，但未具体列出所有版块，相关性中等，覆盖部分信息。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk_28",
+          "scores": {
+            "relevance": 4,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.3
+          },
+          "reason": "写作水平训练版块的详细内容，仅覆盖写作一个版块，与整体问题相关性低，覆盖有限。"
+        },
+        {
+          "part_id": "part_7",
+          "chunk_id": "chunk_4",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "目录页列出优点标题，与学习版块问题无关，无关内容比例高。"
+        }
+      ],
+      "q_avg_relevance": 5.7,
+      "q_avg_part_completeness": 5.1,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 7.2,
+      "q_merged_completeness_reason": "合并所有chunk后，chunk 15和chunk 12已完整列出六大版块和三十三项模块，覆盖所有关键信息点。目录页和优点页的片段提供了部分版块名称作为补充。整体覆盖度达100%。",
+      "q_summary": "该问题下各part表现分化严重：chunk 15和12表现最优，直接完整回答问题；chunk 2、33作为目录和优点页提供部分名称，但信息密度低；chunk 28和4完全无关，属于噪声。片段级与合并后完整性差异明显，单个无关chunk（4,28）质量差，但核心chunk（15,12）质量高，合并后完全覆盖。主要优势在于核心信息召回齐全，不足在于混入了作文版块等无关内容。"
+    },
+    {
+      "q_id": 2,
+      "question": "爱优读智能英语的优点有哪些？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk_33",
+          "scores": {
+            "relevance": 8,
+            "completeness": 6,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.0
+          },
+          "reason": "详细阐述了优点1、2、3的开头，高度相关，覆盖了3个优点的部分内容，事实准确。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk_36",
+          "scores": {
+            "relevance": 8,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.8
+          },
+          "reason": "详细阐述了优点2、3，与问题相关，覆盖了2个优点，无事实错误。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk_3",
+          "scores": {
+            "relevance": 7,
+            "completeness": 6,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.8
+          },
+          "reason": "目录页列出了优点1-6的标题，有相关性并提供概述，但无详细内容。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk_38",
+          "scores": {
+            "relevance": 9,
+            "completeness": 6,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.3
+          },
+          "reason": "详细阐述了优点6、7，高度相关，覆盖了2个优点，质量高。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk_31",
+          "scores": {
+            "relevance": 2,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.3
+          },
+          "reason": "理念部分，与优点无直接关系，几乎为无关内容。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk_12",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "系统介绍，与优点无关。"
+        },
+        {
+          "part_id": "part_7",
+          "chunk_id": "chunk_15",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "版块介绍，与优点无关。"
+        }
+      ],
+      "q_avg_relevance": 5.1,
+      "q_avg_part_completeness": 3.7,
+      "q_merged_completeness": 6,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 6.7,
+      "q_merged_completeness_reason": "期望覆盖7个优点的详细内容。合并后，chunk33,36覆盖了优点1,2,3；chunk38覆盖了优点6,7；chunk3（目录）提供了优点1-6标题。缺点：优点4（以阅读为核心的重应用能力培养）和优点5（多维度精准智能听说特训）仅有标题，无详细内容召回。覆盖率约5/7=71%。",
+      "q_summary": "该问题下最优part为chunk 33,36,38，覆盖了5个优点的详细说明；最差part为chunk31,12,15，完全无关。片段级与合并后完整性差异大，因单个chunk只覆盖个别优点。整体覆盖度的不足主要在于优点4和5的详细内容缺失，这可能是由于切片截断或召回数量不足导致。"
+    },
+    {
+      "q_id": 3,
+      "question": "在阅读训练版块中，精准读训练匹配文章的依据是什么？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk_21",
+          "scores": {
+            "relevance": 9,
+            "completeness": 8,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.8
+          },
+          "reason": "直接回答精准读训练匹配依据：熟词率90%以上和阅读力水平双挂钩，高度相关且信息完整。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk_22",
+          "scores": {
+            "relevance": 9,
+            "completeness": 7,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.5
+          },
+          "reason": "延续chunk21，进一步阐述依据和效果，相关性强，补充了细节。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk_34",
+          "scores": {
+            "relevance": 5,
+            "completeness": 4,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.8
+          },
+          "reason": "在优点1中提及精准阅读应用，但非专门回答匹配依据，相关性中等，覆盖部分信息。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk_35",
+          "scores": {
+            "relevance": 2,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.3
+          },
+          "reason": "优点1的延续，与匹配依据无关。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk_24",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "语法版块内容，与精准读训练无关。"
+        }
+      ],
+      "q_avg_relevance": 5.2,
+      "q_avg_part_completeness": 4.2,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 6.9,
+      "q_merged_completeness_reason": "合并chunk 21和22，完整覆盖了精准读训练匹配文章的两个核心依据：1.词汇熟词率90%以上；2.阅读力水平。双挂钩的方式已阐明。覆盖度100%。",
+      "q_summary": "该问题下chunk 21和22表现最优，精确回答了匹配依据；chunk34有部分相关但非核心；chunk24,35完全无关。片段级完整性低是因为有效信息集中在两个chunk中，其余为噪声。合并后能完美覆盖，说明核心信息召回准确，但噪声过滤不佳。"
+    },
+    {
+      "q_id": 4,
+      "question": "爱优读智能英语学习系统采用了哪种词汇理念来帮助学生高效学习词汇？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk_31",
+          "scores": {
+            "relevance": 6,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.3
+          },
+          "reason": "提到以词汇为基础的理念，但未明确指出“高频词汇”这一核心，相关性中等，覆盖部分要点。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk_17",
+          "scores": {
+            "relevance": 9,
+            "completeness": 8,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.8
+          },
+          "reason": "详细介绍精准测词汇筛查，并明确提到采用高频词汇数据库，高度相关且信息完整。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk_33",
+          "scores": {
+            "relevance": 8,
+            "completeness": 6,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.0
+          },
+          "reason": "优点1中提及高频词汇数据库，相关性强，覆盖了核心词汇理念。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk_34",
+          "scores": {
+            "relevance": 7,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.5
+          },
+          "reason": "优点1延续，继续提到高频词汇，相关性较好，但重复信息较多。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk_32",
+          "scores": {
+            "relevance": 3,
+            "completeness": 2,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.8
+          },
+          "reason": "讨论版块影响占比，与词汇理念关系不大。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk_15",
+          "scores": {
+            "relevance": 4,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.3
+          },
+          "reason": "版块介绍，提及词汇是基础，但未指明高频词汇理念。"
+        },
+        {
+          "part_id": "part_7",
+          "chunk_id": "chunk_12",
+          "scores": {
+            "relevance": 8,
+            "completeness": 7,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.3
+          },
+          "reason": "系统介绍中明确说明是以自主研发的高频词汇为基础，直接回答了问题。"
+        }
+      ],
+      "q_avg_relevance": 6.4,
+      "q_avg_part_completeness": 5.1,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 7.4,
+      "q_merged_completeness_reason": "合并chunk 12,17,33后，明确覆盖了“高频词汇”这一核心理念，并解释了其数据分析基础和优势。关键信息点全覆盖。",
+      "q_summary": "该问题下chunk 17和12表现最优，直接点明高频词汇理念；chunk31,33,34提供支撑但不够直接；chunk32,15相关性弱。合并后完整性高，说明核心信息已召回，但部分片段（32,15）为冗余噪声。"
+    },
+    {
+      "q_id": 5,
+      "question": "精准读训练帮助学生掌握词汇的核心流程是什么？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk_21",
+          "scores": {
+            "relevance": 7,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.5
+          },
+          "reason": "介绍精准读训练，但核心流程在下一个chunk，本chunk提及匹配方式，属于流程的背景，相关性较好。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk_34",
+          "scores": {
+            "relevance": 6,
+            "completeness": 4,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.0
+          },
+          "reason": "优点1中提及结合艾宾浩斯和精准阅读应用，是流程的部分环节，相关性中等。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk_22",
+          "scores": {
+            "relevance": 5,
+            "completeness": 4,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.8
+          },
+          "reason": "继续精准读的训练效果，未涉及掌握词汇的流程步骤，相关性一般。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk_18",
+          "scores": {
+            "relevance": 9,
+            "completeness": 9,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 9.0
+          },
+          "reason": "精准读词汇学习章节，详细说明了预习(短时记忆)-应用(长久记忆)-巩固复习(永久记忆)的核心流程，完美回答问题。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk_17",
+          "scores": {
+            "relevance": 2,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.3
+          },
+          "reason": "精准测词汇筛查，与精准读的词汇掌握流程无关。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk_20",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "单词速记版块，与精准读训练流程无关。"
+        }
+      ],
+      "q_avg_relevance": 5.0,
+      "q_avg_part_completeness": 4.0,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 6.8,
+      "q_merged_completeness_reason": "期望覆盖核心流程：高频词汇预习(短时记忆) → 文章应用(长久记忆) → 巩固与复习(永久记忆)。合并chunk 18后，这三大步骤已完整覆盖，且细节充足。覆盖度100%。",
+      "q_summary": "该问题下chunk 18为黄金片段，完美覆盖核心流程；chunk21,34提供部分环节；chunk17,20完全无关。片段级完整性因无关片段多而显得低，但合并后凭借单个核心chunk即可达到完美覆盖。噪声问题再次凸显。"
+    },
+    {
+      "q_id": 6,
+      "question": "爱优读的“高频词汇”数据库是如何构建的并具有什么优势？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk_17",
+          "scores": {
+            "relevance": 8,
+            "completeness": 7,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.3
+          },
+          "reason": "详细介绍高频词汇数据库的优势（权威性、测试优化、结合高频数据），对构建过程有提及但不够具体，相关性高，覆盖优势部分。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk_16",
+          "scores": {
+            "relevance": 9,
+            "completeness": 9,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 9.0
+          },
+          "reason": "详细阐述构建过程：利用1.18亿单词语料库，按比例和次数排列；并说明优势：优先学习高考试频率词汇，提分效率更好。完美回答问题。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk_33",
+          "scores": {
+            "relevance": 6,
+            "completeness": 4,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.0
+          },
+          "reason": "优点1中提及高频词汇数据库，但不够详细，相关性中等。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk_18",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "精准读词汇学习，与高频词汇数据库构建无关。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk_34",
+          "scores": {
+            "relevance": 5,
+            "completeness": 4,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.8
+          },
+          "reason": "优点1延续，提及高频词汇，但信息重复。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk_15",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "版块介绍，无关。"
+        },
+        {
+          "part_id": "part_7",
+          "chunk_id": "chunk_19",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "同步全词汇学习，与高频词汇数据库构建无关。"
+        }
+      ],
+      "q_avg_relevance": 4.4,
+      "q_avg_part_completeness": 3.9,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 6.6,
+      "q_merged_completeness_reason": "期望覆盖构建过程（1.18亿语料库，按频率排列）和优势（优先学习高频词，学什么考什么）。合并chunk16后，构建过程和核心优势已完整覆盖。覆盖度100%。",
+      "q_summary": "该问题下chunk16为黄金片段，详细解答了构建与优势；chunk17补充了优势；chunk33,34有部分提及但冗余；chunk18,15,19完全无关。合并后完整性极高，但无关片段占比高导致片段级平均分低。"
+    },
+    {
+      "q_id": 7,
+      "question": "爱优读智能英语学习系统的核心理念中词汇、阅读、应用、训练的关系是什么？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk_31",
+          "scores": {
+            "relevance": 9,
+            "completeness": 9,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 9.0
+          },
+          "reason": "直接点明核心理念：以词汇为基础、以阅读为核心、以应用为重点、以训练为手段，完美回答问题。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk_37",
+          "scores": {
+            "relevance": 7,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.5
+          },
+          "reason": "优点4阐述以阅读为核心重应用能力培养，体现了部分关系，但未全面指出四者关系，相关性较好。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk_34",
+          "scores": {
+            "relevance": 6,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.3
+          },
+          "reason": "优点1中提及这四者，但不够系统，相关性中等。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk_22",
+          "scores": {
+            "relevance": 3,
+            "completeness": 2,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.8
+          },
+          "reason": "精准读训练效果描述，与核心理念关系不大。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk_32",
+          "scores": {
+            "relevance": 4,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.3
+          },
+          "reason": "讨论版块影响，提到了词汇和阅读优先，与理念有间接关系。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk_33",
+          "scores": {
+            "relevance": 5,
+            "completeness": 4,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.8
+          },
+          "reason": "优点1开头，提及全系列学习方案，与四者关系有间接体现。"
+        },
+        {
+          "part_id": "part_7",
+          "chunk_id": "chunk_15",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "版块介绍，无关。"
+        }
+      ],
+      "q_avg_relevance": 5.0,
+      "q_avg_part_completeness": 4.1,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 6.8,
+      "q_merged_completeness_reason": "期望覆盖四者的明确关系。合并chunk31后，直接获得了定义：词汇为基础、阅读为核心、应用为重点、训练为手段。其他chunk提供了实践层面的阐释。关键信息点全覆盖。",
+      "q_summary": "该问题下chunk31是核心片段，直接定义了四者关系；chunk37,34从优点角度印证了部分关系；chunk22,32,33,15多为语境信息或无关噪声。合并后信息完整，但单片段质量除chunk31外均不高。"
+    },
+    {
+      "q_id": 8,
+      "question": "对于英语水平极低或临近中高考的学生，爱优读提供了哪个版块及其使用建议？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk_28",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "写作水平训练版块，与问题针对的极低水平及速记版块无关。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk_21",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "阅读水平训练版块，无关。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk_24",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "语法水平训练版块，无关。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk_15",
+          "scores": {
+            "relevance": 3,
+            "completeness": 2,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.8
+          },
+          "reason": "版块总介绍中列出了“单词速记”，但无详细内容和使用建议，相关性低，仅覆盖版块名称。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk_37",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "优点4、5，无关。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk_35",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "优点1延续，无关。"
+        },
+        {
+          "part_id": "part_7",
+          "chunk_id": "chunk_23",
+          "scores": {
+            "relevance": 1,
+            "completeness": 1,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.0
+          },
+          "reason": "阅读版块详情，无关。"
+        }
+      ],
+      "q_avg_relevance": 1.3,
+      "q_avg_part_completeness": 1.1,
+      "q_merged_completeness": 3,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 5.1,
+      "q_merged_completeness_reason": "期望覆盖版块名称“单词速记”及使用建议（针对极低学生：达到300-400/600-800词汇量后停止，后续按任务推送）。合并所有chunk，仅chunk15提到“单词速记”四个字，完全缺乏使用建议等关键信息。覆盖率约20%。",
+      "q_summary": "该问题召回完全失败，是所有问题中最差的。所有召回chunk均为无关版块（写作、阅读、语法等），未能检索到包含核心答案的“单词速记学习”章节。这反映了纯语义检索在处理“极低水平”等特定条件时存在严重语义漂移。片段级和合并后完整性都很低，核心信息严重缺失。"
+    }
+  ]
+}
