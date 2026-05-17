@@ -6,10 +6,10 @@
 
 | 文件名 | 功能 | 输入 | 输出 |
 |--------|------|------|------|
-| `preprocess_questions_simple.py` | 为数字编号（如 `1.`）添加“问题”前缀 | 问题文本文件 | 添加前缀后的问题文本 |
-| `preprocess_questions_advanced.py` | 支持数字编号、中文编号（一、二、）、特殊格式（`**4．**`） | 问题文本文件 | 格式化后的问题文本 |
-| `extract_qa_pairs.py` | 提取问答对，生成 Excel | 格式化后的问题+答案文本 | Excel 文件（question, ground_truth） |
-| `retrieve_chunks.py` | 调用 Dify 知识库检索 API，获取每个问题的召回 chunk | 问题文件（每行一个问题） | 文本文件（问题对应的召回片段） |
+| `preprocess_questions_simple.txt` | 为数字编号（如 `1.`）添加“问题”前缀 | 问题文本文件 | 添加前缀后的问题文本 |
+| `preprocess_questions_advanced.txt` | 支持数字编号、中文编号（一、二、）、特殊格式（`**4．**`） | 问题文本文件 | 格式化后的问题文本 |
+| `extract_qa_pairs.txt` | 提取问答对，生成 Excel | 格式化后的问题+答案文本 | Excel 文件（question, ground_truth） |
+| `retrieve_chunks.txt` | 调用 Dify 知识库检索 API，获取每个问题的召回 chunk | 问题文件（每行一个问题） | 文本文件（问题对应的召回片段） |
 
 ## 使用流程
 
