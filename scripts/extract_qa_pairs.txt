@@ -1,0 +1,109 @@
+import os
+import re
+import pandas as pd
+from tkinter import filedialog, Tk
+
+def parse_txt_to_qa(txt_path):
+    """解析 TXT 文件，返回问题列表和对应的答案列表"""
+    with open(txt_path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    questions = []
+    answers = []
+    current_question = None
+    current_answer_parts = []
+
+    # 正则匹配主问题行：以 "问题" + 数字 + 点 开头
+    main_pattern = re.compile(r'^问题(\d+)\.(.+)$')
+    # 匹配子答案行：以 数字-数字 开头（可能还有更多 -数字）
+    sub_pattern = re.compile(r'^\s*(\d+-\d+(?:-\d+)?)\s+(.*)$')
+
+    for line in lines:
+        line = line.rstrip('\n')
+        # 跳过空行
+        if not line.strip():
+            continue
+
+        # 检查是否是主问题行
+        main_match = main_pattern.match(line)
+        if main_match:
+            # 保存上一个问题
+            if current_question is not None and current_answer_parts:
+                questions.append(current_question)
+                answers.append('\n'.join(current_answer_parts))
+            # 提取问题文本（去掉“问题”前缀和数字编号）
+            # 例如 "问题1.经济上有困难，能够分期付款吗？（上一次交一次）" -> "经济上有困难，能够分期付款吗？（上一次交一次）"
+            q_text = main_match.group(2).strip()
+            # 如果问题文本以点开头（如 ".经济上有困难..."），去掉点
+            if q_text.startswith('.'):
+                q_text = q_text[1:].strip()
+            current_question = q_text
+            current_answer_parts = []
+            continue
+
+        # 不是主问题，则检查是否是子答案行
+        sub_match = sub_pattern.match(line)
+        if sub_match and current_question is not None:
+            # 保留整行内容（包括编号），备用
+            current_answer_parts.append(line.strip())
+            continue
+
+        # 其他情况（例如章节标题），忽略
+        # 如果当前有问题且该行不是空行且不是子答案格式，可以视为答案的延续（例如多行答案？本例中不需要）
+        # 但为了安全，如果当前有问题且行不为空，也可以追加（但概率低）
+        if current_question is not None and line.strip() and not sub_match:
+            # 可能是答案的延续，但我们的数据里不太会出现，为了健壮性仍加入
+            current_answer_parts.append(line.strip())
+
+    # 保存最后一个问题
+    if current_question is not None and current_answer_parts:
+        questions.append(current_question)
+        answers.append('\n'.join(current_answer_parts))
+
+    return questions, answers
+
+def main():
+    root = Tk()
+    root.withdraw()
+
+    # 选择 txt 文件
+    txt_path = filedialog.askopenfilename(
+        title="请选择处理后的 TXT 文件（如 序号版问题前3部分.txt）",
+        filetypes=[("Text files", "*.txt"), ("All files", "*.*")]
+    )
+    if not txt_path:
+        print("未选择文件，程序退出。")
+        return
+
+    # 解析 TXT
+    questions, answers = parse_txt_to_qa(txt_path)
+    if not questions:
+        print("未找到任何问题，请检查文件格式。")
+        return
+
+    # 创建 DataFrame
+    df = pd.DataFrame({
+        'question': questions,
+        'ground_truth': answers
+    })
+
+    # 保存 Excel 到桌面，自定义文件名
+    desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+    save_path = filedialog.asksaveasfilename(
+        title="保存 Excel 文件",
+        initialdir=desktop,
+        defaultextension=".xlsx",
+        filetypes=[("Excel files", "*.xlsx"), ("All files", "*.*")]
+    )
+    if not save_path:
+        print("未选择保存路径，程序退出。")
+        return
+
+    df.to_excel(save_path, index=False, sheet_name="Sheet1")
+    print(f"成功！已保存到：{save_path}")
+    print(f"共提取 {len(questions)} 对问答。")
+
+    root.destroy()
+
+if __name__ == "__main__":
+    main()

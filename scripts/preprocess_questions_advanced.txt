@@ -1,0 +1,77 @@
+import os
+import re
+from tkinter import filedialog, Tk
+
+def add_question_prefix(input_path, output_path):
+    with open(input_path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    new_lines = []
+    for line in lines:
+        original_line = line
+        # 处理1：纯数字加点（英文点），如 "1."、"2."，但不匹配 "1-1"
+        # 匹配行首可选空白或*，然后数字，点（英文），后面不是减号
+        m = re.match(r'^(\s*|\*+)\s*(\d+)\.(?!-)', line)
+        if m:
+            prefix = m.group(1)   # 前面的空白或*
+            num = m.group(2)
+            # 在数字前插入“问题”
+            new_line = f"{prefix}问题{num}.{line[len(m.group(0)):]}"
+            new_lines.append(new_line)
+            continue
+
+        # 处理2：中文数字加顿号，如 "一、"、"二、"，同时处理可能存在的 "## " 等
+        m = re.match(r'^(\s*#*\s*)([一二三四五六七八九十百千万]+)、', line)
+        if m:
+            prefix = m.group(1)
+            chinese_num = m.group(2)
+            new_line = f"{prefix}问题{chinese_num}、{line[len(m.group(0)):]}"
+            new_lines.append(new_line)
+            continue
+
+        # 处理3：带 ** 和全角点．的格式，如 "**4．你们这个...**"
+        # 匹配行首可能多个 *，然后数字，全角点．，后面到行尾
+        m = re.match(r'^(\**)\s*(\d+)．', line)
+        if m:
+            stars = m.group(1)   # 前面的*号
+            num = m.group(2)
+            # 在数字前插入“问题”
+            new_line = f"{stars}问题{num}．{line[len(m.group(0)):]}"
+            new_lines.append(new_line)
+            continue
+
+        # 未匹配的特殊情况：单独处理 "**（二）学习方式问题**" 这种？不在需求内，保持原样
+        new_lines.append(line)
+
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.writelines(new_lines)
+    print(f"处理完成！已保存至：{output_path}")
+
+def main():
+    root = Tk()
+    root.withdraw()
+
+    input_file = filedialog.askopenfilename(
+        title="请选择要处理的文本文件",
+        filetypes=[("Text files", "*.txt"), ("All files", "*.*")]
+    )
+    if not input_file:
+        print("未选择文件，退出。")
+        return
+
+    desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+    output_file = filedialog.asksaveasfilename(
+        title="保存处理后的文件",
+        initialdir=desktop,
+        defaultextension=".txt",
+        filetypes=[("Text files", "*.txt"), ("All files", "*.*")]
+    )
+    if not output_file:
+        print("未选择保存路径，退出。")
+        return
+
+    add_question_prefix(input_file, output_file)
+    root.destroy()
+
+if __name__ == "__main__":
+    main()

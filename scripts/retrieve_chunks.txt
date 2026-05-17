@@ -1,0 +1,145 @@
+import requests
+import json
+import time
+import os
+from tkinter import filedialog, Tk
+
+# ========== 配置区域 ==========
+API_KEY = "****"
+DATASET_ID = "****"
+BASE_URL = "****"
+
+RETRIEVE_URL = f"{BASE_URL}/datasets/{DATASET_ID}/retrieve"
+
+HEADERS = {
+    "Authorization": f"Bearer {API_KEY}",
+    "Content-Type": "application/json"
+}
+
+# 检索参数（与你的知识库设置保持一致）
+RETRIEVAL_CONFIG = {
+    "search_method": "semantic_search",   # 通用模式通常是语义检索
+    "reranking_enable": True,              # 如有 rerank 则开启，否则 False
+    "reranking_model": {
+        "reranking_provider_name": "siliconflow",
+        "reranking_model_name": "Pro/BAAI/bge-reranker-v2-m3"
+    },
+    "top_k": 5,
+    "score_threshold_enabled": True,
+    "score_threshold": 0.5
+}
+
+# ========== 函数定义 ==========
+def select_question_file():
+    """弹出文件选择对话框，让用户选择 questions.txt 文件（默认桌面）"""
+    root = Tk()
+    root.withdraw()  # 隐藏主窗口
+    # 设置默认路径为桌面
+    desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+    initial_dir = desktop if os.path.exists(desktop) else os.getcwd()
+    file_path = filedialog.askopenfilename(
+        title="请选择包含问题的文本文件",
+        initialdir=initial_dir,
+        filetypes=[("文本文件", "*.txt"), ("所有文件", "*.*")]
+    )
+    root.destroy()
+    return file_path
+
+def select_save_file():
+    """弹出保存文件对话框，让用户选择保存位置和文件名（默认桌面）"""
+    root = Tk()
+    root.withdraw()
+    desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+    initial_dir = desktop if os.path.exists(desktop) else os.getcwd()
+    save_path = filedialog.asksaveasfilename(
+        title="保存召回结果",
+        initialdir=initial_dir,
+        defaultextension=".txt",
+        filetypes=[("文本文件", "*.txt"), ("所有文件", "*.*")]
+    )
+    root.destroy()
+    return save_path
+
+def retrieve_chunks(question):
+    """调用 Dify 检索 API，返回 chunk 列表"""
+    payload = {
+        "query": question,
+        "retrieval_model": RETRIEVAL_CONFIG
+    }
+    try:
+        resp = requests.post(RETRIEVE_URL, headers=HEADERS, json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        records = data.get("records", [])
+        chunks = []
+        for rec in records:
+            segment = rec.get("segment", {})
+            content = segment.get("content", "")
+            if not content:
+                content = rec.get("content", "")
+            chunks.append({"content": content})
+        return chunks
+    except Exception as e:
+        print(f"检索失败 [{question}]: {e}")
+        return []
+
+def format_output(question, chunks, idx):
+    """按照示例格式生成单个问题的文本块"""
+    lines = []
+    lines.append(f"{idx}. {question}")
+    lines.append("")
+    for i, ch in enumerate(chunks, 1):
+        lines.append(f"Chunk {i}")
+        lines.append(ch["content"])
+        lines.append("")
+    lines.append("")
+    return "\n".join(lines)
+
+# ========== 主流程 ==========
+def main():
+    # 1. 选择输入文件
+    input_file = select_question_file()
+    if not input_file:
+        print("未选择输入文件，程序退出。")
+        return
+
+    # 2. 读取问题列表
+    try:
+        with open(input_file, "r", encoding="utf-8") as f:
+            questions = [line.strip() for line in f if line.strip()]
+    except Exception as e:
+        print(f"读取文件失败: {e}")
+        return
+
+    if not questions:
+        print("问题列表为空，请检查文件内容。")
+        return
+
+    # 3. 选择输出文件
+    output_file = select_save_file()
+    if not output_file:
+        print("未选择保存路径，程序退出。")
+        return
+
+    # 4. 循环处理每个问题
+    all_output = []
+    total = len(questions)
+    for idx, q in enumerate(questions, start=1):
+        print(f"正在处理 ({idx}/{total}): {q}")
+        chunks = retrieve_chunks(q)
+        if not chunks:
+            print(f"  警告：未召回任何片段")
+        block = format_output(q, chunks, idx)
+        all_output.append(block)
+        time.sleep(1)  # 避免请求过快
+
+    # 5. 写入输出文件
+    try:
+        with open(output_file, "w", encoding="utf-8") as f:
+            f.write("\n".join(all_output))
+        print(f"\n完成！结果已保存到: {output_file}")
+    except Exception as e:
+        print(f"保存文件失败: {e}")
+
+if __name__ == "__main__":
+    main()
