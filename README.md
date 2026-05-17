@@ -29,7 +29,7 @@
 evaluation-system/
 ├── README.md                 # 本文件
 ├── design.md                 # 设计文档（维度定义、公式、权重）
-├── prompts/                  # 评估 Prompt 模板（可导入 Dify）
+├── prompts/                  # 评估 Prompt 模板
 ├── scripts/                  # 自动化脚本
 └── results/                  # 评估结果示例
     ├── knowledge_build/      # 知识库构建效果
