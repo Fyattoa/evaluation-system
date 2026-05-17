@@ -1,0 +1,818 @@
+{
+  "overall": {
+    "weighted_overall_score": 8.66,
+    "weighted_calculation": "0.15 * 8.3 + 0.35 * 8.4 + 0.25 * 8.9 + 0.25 * 9.0 = 8.66",
+    "simple_overall_score": 8.65,
+    "simple_calculation": "0.25 * 8.3 + 0.25 * 8.4 + 0.25 * 8.9 + 0.25 * 9.0 = 8.65",
+    "avg_part_total_score": 7.7,
+    "avg_relevance": 8.3,
+    "avg_part_completeness": 6.3,
+    "avg_merged_completeness": 8.4,
+    "avg_accuracy": 8.9,
+    "avg_faithfulness": 9.0,
+    "summary": "- 最终加权得分为8.7分（全局平均分），计算过程为：0.15 * 8.3 (相关性) + 0.35 * 8.4 (合并完整性) + 0.25 * 8.9 (准确性) + 0.25 * 9.0 (忠实度) = 8.66 ≈ 8.7。\n- 不加权得分为8.65分，计算过程为：0.25 * 8.3 + 0.25 * 8.4 + 0.25 * 8.9 + 0.25 * 9.0 = 8.65。\n- 各维度表现：相关性平均为8.3，片段级完整性（平均）为6.3，合并后完整性平均为8.4，准确性平均为8.9，忠实度平均为9.0。\n- 片段级完整性平均（6.3）与合并后完整性平均（8.4）对比鲜明：单个片段信息有限，但综合多个片段后能较好覆盖答案的核心信息。这反映了RAG系统通过召回多个相关片段，有效弥补了知识切片化带来的信息局部性。\n- 各问题的典型问题模式：在“语法训练模块”和“写作训练模式”问题上，召回片段虽覆盖了主要模块，但对流程细节的描述略显零散，需要用户自行拼凑。\n- 主要强弱项：强项是准确性（8.9）和忠实度（9.0），召回内容几乎全部忠实原文，事实无误。弱项是片段级完整性（6.3），单个碎片的信息覆盖面常不足，但合并后完整性（8.4）表明系统整体召回能力表现良好。\n- 整体召回覆盖度表现：整体表现良好（合并完整性8.4），对大多数问题的核心信息点覆盖较为充分，能够支撑生成完整答案。\n- 改进建议：可优化检索策略，提升召回片段之间的连贯性，或考虑在后处理阶段按逻辑重组片段，以降低用户拼凑信息的认知成本。"
+  }
+}
+  "questions": [
+    {
+      "q_id": 1,
+      "question": "1. 主要包含了哪几个学习版块啊？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk15",
+          "scores": {
+            "relevance": 9,
+            "completeness": 8,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.8
+          },
+          "reason": "高度相关，直接列出了六大版块。作为单个片段，覆盖了问题核心，完整性良好。内容准确，忠实原文。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk2",
+          "scores": {
+            "relevance": 7,
+            "completeness": 4,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.3
+          },
+          "reason": "目录片段，相关性中等。仅提及版块标题，无具体介绍，完整性低。内容无误且忠实。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk24",
+          "scores": {
+            "relevance": 6,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.8
+          },
+          "reason": "主要讲语法训练，对“主要版块”问题相关性较弱。仅覆盖语法版块部分信息，完整性低。内容准确忠实。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk28",
+          "scores": {
+            "relevance": 7,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.0
+          },
+          "reason": "主要讲写作版块，部分相关。仅覆盖写作版块部分信息，完整性低。内容准确忠实。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk35",
+          "scores": {
+            "relevance": 5,
+            "completeness": 2,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.3
+          },
+          "reason": "内容泛谈写作训练与全领域学习，与“主要版块”问题焦点相关性弱。未提供关键版块信息，完整性差。内容准确忠实。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk33",
+          "scores": {
+            "relevance": 6,
+            "completeness": 2,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.5
+          },
+          "reason": "内容为产品优点分析，仅侧面提及学习系统，相关性偏弱。未直接回答版块问题，完整性差。内容准确忠实。"
+        }
+      ],
+      "q_avg_relevance": 6.7,
+      "q_avg_part_completeness": 3.7,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 7.1,
+      "q_merged_completeness_reason": "合并后片段完整覆盖了问题所需的关键信息点：明确提出了“词汇训练、阅读训练、语法训练、听说训练、写作训练、拓展训练”六大学习版块。chunk15提供了核心答案。其他chunk提供了部分版块的细节信息，属补充。",
+      "q_summary": "该问题下各part表现分化明显。最优part (chunk15) 直接、完整地回答了问题，其他parts相关性递减且信息零散。片段级完整性平均低，但合并后完整性高，说明单一核心片段足以支撑答案，其他片段价值有限。整体覆盖度完美。"
+    },
+    {
+      "q_id": 2,
+      "question": "2. “高频词汇”理念到底是怎么一回事？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk16",
+          "scores": {
+            "relevance": 9,
+            "completeness": 7,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.5
+          },
+          "reason": "高度相关，详细阐述了高频词汇的定义、来源和优势。作为首个回答片段，覆盖了定义和核心优势，完整性良好。准确忠实。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk17",
+          "scores": {
+            "relevance": 8,
+            "completeness": 6,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.0
+          },
+          "reason": "相关性强，提供了各学段高频词汇的具体数量，是对理念的量化补充。对理念本身解释较少，完整性中等。准确忠实。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk12",
+          "scores": {
+            "relevance": 7,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.0
+          },
+          "reason": "在介绍系统时提及“以高频词汇为基础”，相关性中等。未展开解释理念，完整性低。准确忠实。"
+        }
+      ],
+      "q_avg_relevance": 8.0,
+      "q_avg_part_completeness": 5.3,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 7.8,
+      "q_merged_completeness_reason": "合并后片段覆盖了关键信息点：1) 定义：根据真实语料库按出现频率排序；2) 来源：历年真题、模考等海量资料建立1.18亿词库；3) 特点：动态更新、与个人数据结合、实现“考什么学什么”；4) 具体分层：各学段对应的词汇量。chunk16和chunk17共同构成完整答案。",
+      "q_summary": "该问题下part_1 (chunk16) 和 part_2 (chunk17) 形成良好互补：前者解释理念，后者提供数据支撑。最差part (chunk12) 仅一笔带过。片段级完整性中等，合并后完整性高，说明结合两个主要片段即可获得全面答案。整体覆盖度优秀。"
+    },
+    {
+      "q_id": 3,
+      "question": "3. 帮助孩子记单词的核心流程是怎么走的？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk18",
+          "scores": {
+            "relevance": 9,
+            "completeness": 7,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.5
+          },
+          "reason": "高度相关，详细描述了“精准读词汇学习”的具体流程（预习、应用、巩固、复习）。覆盖了核心方法流程，完整性良好。准确忠实。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk37",
+          "scores": {
+            "relevance": 6,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.8
+          },
+          "reason": "内容为“以阅读为核心的重应用能力培养”，与记单词流程间接相关。未具体描述记单词流程，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk19",
+          "scores": {
+            "relevance": 5,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.5
+          },
+          "reason": "主要讲“同步全词汇学习”，针对特定学生群体，非核心通用流程，相关性弱。仅提供一种辅助方法，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk34",
+          "scores": {
+            "relevance": 7,
+            "completeness": 4,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.3
+          },
+          "reason": "内容提及“结合艾宾浩斯记忆法和精准阅读应用”，与记单词方法相关。但未详细描述流程，信息点散落，完整性中等偏下。准确忠实。"
+        }
+      ],
+      "q_avg_relevance": 6.8,
+      "q_avg_part_completeness": 4.3,
+      "q_merged_completeness": 8,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 7.3,
+      "q_merged_completeness_reason": "合并后片段覆盖了主要流程：1) 依据学生数据匹配高频词汇预习（艾宾浩斯）；2) 提供熟词率90%以上的精准阅读文章进行应用学习；3) 通过阅读巩固新词汇；4) 后续安排智能复习。chunk18是核心，chunk34补充了关键方法论。但对“同步全词汇”、“单词速记”等其他词汇学习模式的区分不够清晰。",
+      "q_summary": "最优part (chunk18) 清晰描述了主流程。其他parts相关性递减，chunk34提供了关键方法论的补充。片段级完整性较低，但合并后达良好水平，说明主片段信息密度高，辅以少量补充即可。整体覆盖度良好。"
+    },
+    {
+      "q_id": 4,
+      "question": "4. 是怎么做到给孩子个性化匹配学习内容的？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk36",
+          "scores": {
+            "relevance": 9,
+            "completeness": 7,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.5
+          },
+          "reason": "高度相关，专门阐述“因材施教个性化匹配学习机”。通过案例说明了匹配原理及与同步学习的区别，覆盖核心思想，完整性良好。准确忠实。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk31",
+          "scores": {
+            "relevance": 8,
+            "completeness": 6,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.0
+          },
+          "reason": "相关性强，介绍了智能练习系统的三个基本部分（数据、内容、算法），从系统架构角度回答了“怎么做到”。完整性中等。准确忠实。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk34",
+          "scores": {
+            "relevance": 8,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.8
+          },
+          "reason": "相关性强，具体说明了如何利用词汇、阅读、语法等数据库进行精准匹配。信息点具体，但碎片化，完整性中等偏下。准确忠实。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk33",
+          "scores": {
+            "relevance": 7,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.0
+          },
+          "reason": "内容为产品优点对比，提及“为学生匹配适合个人的方案”，相关性中等。未解释匹配机制，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk15",
+          "scores": {
+            "relevance": 5,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.5
+          },
+          "reason": "列举学习模块，与个性化匹配机制间接相关。无机制解释，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk12",
+          "scores": {
+            "relevance": 7,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.0
+          },
+          "reason": "简介系统时提到“根据学生个人英语水平，精准匹配”，相关性中等。未展开解释，完整性低。准确忠实。"
+        }
+      ],
+      "q_avg_relevance": 7.3,
+      "q_avg_part_completeness": 4.5,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 7.5,
+      "q_merged_completeness_reason": "合并后片段全面覆盖了关键信息点：1) 核心理念：根据学生真实水平匹配，而非年级同步；2) 技术基础：构建学生个人数据库（词汇、语法、阅读力等）；3) 匹配策略：通过算法从海量内容中挑选；4) 具体应用：在各版块（词汇、阅读、语法等）均实现熟词率90%+的精准匹配。chunk36给出理念，chunk31给出架构，chunk34给出实例，构成完整答案。",
+      "q_summary": "最优parts (chunk36, 31, 34) 分别从理念、架构、实例三个层次回答，互补性强。其他parts相关性低。片段级完整性一般，但合并后完整性优秀，说明多角度召回效果显著。整体覆盖度完美。"
+    },
+    {
+      "q_id": 5,
+      "question": "5. 词汇测试的权威性都体现在哪些地方？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk17",
+          "scores": {
+            "relevance": 9,
+            "completeness": 8,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.8
+          },
+          "reason": "高度相关，集中阐述了词汇测试权威性的多个方面：数据基础、规模、验证、更新机制。覆盖关键点，完整性良好。准确忠实。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk18",
+          "scores": {
+            "relevance": 6,
+            "completeness": 4,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.0
+          },
+          "reason": "主要讲“精准读词汇学习”，与“测试权威性”相关性中等。提及符合教材编纂思路，是一处体现，但非全篇焦点。完整性中等偏下。准确忠实。"
+        }
+      ],
+      "q_avg_relevance": 7.5,
+      "q_avg_part_completeness": 6.0,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 7.9,
+      "q_merged_completeness_reason": "合并后片段完整覆盖了关键信息点：1) 数据基础：采用近20年全国范围高频词汇；2) 规模与深度：1.18亿级真题词频数据分析；3) 实践验证：近30万学生数据检验并持续优化算法；4) 持续更新：长期不间断更新；5) 原理权威性：使用频率是核心权重。chunk17提供了核心答案，chunk18补充了一条原则性依据。",
+      "q_summary": "绝大多数答案由chunk17提供，其权威性描述系统且完整。chunk18相关性较弱，仅补充一点。片段级完整性中等，但合并后完整性高，说明单一核心片段即能很好地回答该问题。整体覆盖度优秀。"
+    },
+    {
+      "q_id": 6,
+      "question": "6. 在听说训练这块都有哪些特色功能？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk37",
+          "scores": {
+            "relevance": 8,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.8
+          },
+          "reason": "高度相关，概括性描述了“多维度精准智能听说特训”的特色方法和核心功能。覆盖主要特色，但描述较概括，完整性中等。准确忠实。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk27",
+          "scores": {
+            "relevance": 9,
+            "completeness": 8,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.8
+          },
+          "reason": "高度相关，详细列出了听说训练包含的具体板块和功能。信息具体，覆盖关键特色功能，完整性良好。准确忠实。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk28",
+          "scores": {
+            "relevance": 8,
+            "completeness": 6,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.0
+          },
+          "reason": "相关性强，详细介绍了“分级视听”的功能特色。信息具体，完整性中等偏上。准确忠实。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk15",
+          "scores": {
+            "relevance": 5,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.5
+          },
+          "reason": "罗列学习模块，与听说训练特色功能间接相关。无特色描述，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk4",
+          "scores": {
+            "relevance": 4,
+            "completeness": 2,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.0
+          },
+          "reason": "目录行，仅提及“多维度精准智能听说特训”，与问题相关性弱。无具体功能信息，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk12",
+          "scores": {
+            "relevance": 5,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.5
+          },
+          "reason": "简介部分提及听说训练模块名，相关性偏弱。无特色功能描述，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_7",
+          "chunk_id": "chunk33",
+          "scores": {
+            "relevance": 4,
+            "completeness": 2,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.0
+          },
+          "reason": "产品优点部分提及听说特训，与功能特色问题相关性弱。未展开描述，完整性低。准确忠实。"
+        }
+      ],
+      "q_avg_relevance": 6.1,
+      "q_avg_part_completeness": 4.1,
+      "q_merged_completeness": 8,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 7.1,
+      "q_merged_completeness_reason": "合并后片段覆盖了主要特色功能：1) 总体特色：多维度、智能化、个性化匹配；2) 核心板块：音标训练、英语备考听、情景英语、分级视听；3) 具体功能点：闯关解锁、多倍速听力、精准匹配听力材料、无/英/中英字幕切换等。chunk27和chunk28提供了具体功能信息，chunk37提供了特色概括。但对“AI精准发音纠正”等特色细节的描述不够深入。",
+      "q_summary": "最优parts (chunk27, 28, 37) 分别提供了功能列表、具体功能和总体特色，组合良好。最差parts为目录和简介，无具体信息。片段级完整性低，但合并后达到良好水平，说明需要组合多个片段才能完整回答。整体覆盖度良好。"
+    },
+    {
+      "q_id": 7,
+      "question": "7. 语法训练包括哪些学习模块？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk25",
+          "scores": {
+            "relevance": 9,
+            "completeness": 8,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.8
+          },
+          "reason": "高度相关，清晰列出了语法训练的四个学习模块。覆盖问题核心，信息明确，完整性良好。准确忠实。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk26",
+          "scores": {
+            "relevance": 8,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.8
+          },
+          "reason": "相关性强，详细解释了“单项选择”、“首字母填空”、“语法填空”的训练模式。对“模块”问题而言，信息偏向训练方式，完整性中等。准确忠实。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk24",
+          "scores": {
+            "relevance": 7,
+            "completeness": 4,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.3
+          },
+          "reason": "主要讲“语感训练”，是语法训练模块之一，相关性较好。未完整列出所有模块，完整性中等偏下。准确忠实。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk34",
+          "scores": {
+            "relevance": 7,
+            "completeness": 4,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.3
+          },
+          "reason": "提及语法训练的精准匹配，与“学习模块”问题间接相关。未列举模块，完整性中等偏下。准确忠实。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk15",
+          "scores": {
+            "relevance": 6,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.8
+          },
+          "reason": "罗列学习模块时提及“语法训练”等，相关性中等。未展开说明语法训练子模块，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk2",
+          "scores": {
+            "relevance": 5,
+            "completeness": 2,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.3
+          },
+          "reason": "目录行，仅提及“语法水平训练版块”，相关性弱。无模块信息，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_7",
+          "chunk_id": "chunk28",
+          "scores": {
+            "relevance": 3,
+            "completeness": 2,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 5.8
+          },
+          "reason": "内容为写作训练，与语法学习模块问题基本无关。无相关信息，完整性差。内容本身准确忠实。"
+        }
+      ],
+      "q_avg_relevance": 6.4,
+      "q_avg_part_completeness": 4.0,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 7.2,
+      "q_merged_completeness_reason": "合并后片段完整覆盖了关键信息点：明确列出了语法训练包含【语法知识点闯关训练】、【语法拓展特训】、【语感训练】、【语法智能单项选择训练】四大模块。chunk25提供了核心列表答案。chunk24和chunk26分别补充了“语感训练”和“单项选择”等具体内容。",
+      "q_summary": "该问题下part表现高度分化。最优part (chunk25) 直接、清晰地回答了问题。其他parts或提供补充信息（chunk24, 26），或相关性弱（chunk28）。片段级完整性低，但合并后完整性高，说明单一核心片段足以回答，其他片段价值有限。整体覆盖度优秀。"
+    },
+    {
+      "q_id": 8,
+      "question": "8. 写作训练有哪几种模式啊？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk28",
+          "scores": {
+            "relevance": 9,
+            "completeness": 7,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.5
+          },
+          "reason": "高度相关，明确列出了写作训练的两种主要模式（基础能力训练、真题写作训练）及其内部初阶和进阶的区分。覆盖核心框架，完整性良好。准确忠实。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk29",
+          "scores": {
+            "relevance": 8,
+            "completeness": 6,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.0
+          },
+          "reason": "相关性强，详细解释了“真题写作训练“初阶”和“进阶”的具体方法和流程。对理解模式内涵有帮助，信息具体，完整性中等偏上。准确忠实。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk30",
+          "scores": {
+            "relevance": 8,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.8
+          },
+          "reason": "相关性强，详细介绍了“写作训练之‘作文批改’”的模式。作为独立模式进行补充，完整性中等。准确忠实。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk26",
+          "scores": {
+            "relevance": 4,
+            "completeness": 2,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.0
+          },
+          "reason": "内容为语法训练的题型，与写作训练模式问题无关。无相关信息，完整性差。内容本身准确忠实。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk35",
+          "scores": {
+            "relevance": 6,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.8
+          },
+          "reason": "提及“根据学生英语水平匹配多种写作训练模式”，与问题间接相关。未具体列举模式，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk3",
+          "scores": {
+            "relevance": 5,
+            "completeness": 2,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.3
+          },
+          "reason": "目录行，仅提及“写作水平训练版块”，相关性弱。无模式信息，完整性低。准确忠实。"
+        }
+      ],
+      "q_avg_relevance": 6.7,
+      "q_avg_part_completeness": 4.2,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 7.2,
+      "q_merged_completeness_reason": "合并后片段完整覆盖了关键信息点：明确指出写作训练主要有两种模式：1) 基础能力训练（初阶与进阶）；2) 真题写作训练（初阶与进阶）。并补充了独立的“作文批改”模式。chunk28提供了核心分类答案，chunk29和chunk30提供了关键模式的详细说明。",
+      "q_summary": "最优parts (chunk28, 29, 30) 分别提供了模式框架和两种关键模式的详细说明，回答全面。最差part (chunk26) 完全无关。片段级完整性中等，但合并后完整性高，说明需要组合几个片段才能获得完整答案，且组合效果良好。整体覆盖度优秀。"
+    },
+    {
+      "q_id": 9,
+      "question": "9. 这个系统核心优点都有啥？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk36",
+          "scores": {
+            "relevance": 9,
+            "completeness": 7,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.5
+          },
+          "reason": "高度相关，阐述了“因材施教个性化匹配”和“高频词汇植入高效学习法”两大具体优点。覆盖核心优点，但非全貌，完整性良好。准确忠实。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk37",
+          "scores": {
+            "relevance": 9,
+            "completeness": 6,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.3
+          },
+          "reason": "高度相关，阐述了“以阅读为核心的重应用能力培养”和“多维度精准智能听说特训”两优点。信息点具体，完整性中等偏上。准确忠实。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk33",
+          "scores": {
+            "relevance": 8,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.8
+          },
+          "reason": "相关性强，对比市面产品，引出爱优读“全系列英语学习系统”的优势，是核心优点之一。分析角度好，但描述较概括，完整性中等。准确忠实。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk12",
+          "scores": {
+            "relevance": 7,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.0
+          },
+          "reason": "系统简介提及“个性化自主学习机制”等，与优点相关。未系统列出优点，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk2",
+          "scores": {
+            "relevance": 5,
+            "completeness": 2,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.3
+          },
+          "reason": "目录行，仅提及“爱优读的优点”章节，相关性弱。无具体优点信息，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk15",
+          "scores": {
+            "relevance": 6,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.8
+          },
+          "reason": "介绍学习版块，与系统核心优点间接相关。无优点总结，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_7",
+          "chunk_id": "chunk31",
+          "scores": {
+            "relevance": 6,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.8
+          },
+          "reason": "阐述学习理念，与“核心优点”问题相关性中等。理念与优点有联系，但非直接回答，完整性低。准确忠实。"
+        }
+      ],
+      "q_avg_relevance": 7.1,
+      "q_avg_part_completeness": 4.1,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 7.4,
+      "q_merged_completeness_reason": "合并后片段完整覆盖了关键信息点：整合原文档“爱优读智能英语的优点”章节的核心内容，归纳为：1) 因材施教个性化匹配；2) 高频词汇植入的高效学习法；3) 以阅读为核心的重应用能力培养；4) 多维度精准智能听说特训；5) 英语专属学习系统（全系列）；6) 智能化多样化人机交互。chunk36, 37, 33共同构成了完整的优点列表。",
+      "q_summary": "该问题需要结合多个片段才能完整回答。最优parts (chunk36, 37, 33) 分别阐述了不同的具体优点，且chunk33提供了宝贵的市场对比视角。最差parts (chunk2, 15) 相关性差。片段级完整性低，但合并后完整性高，有效展示了多片段召回的价值。整体覆盖度优秀。"
+    },
+    {
+      "q_id": 10,
+      "question": "10. 是怎么通过阅读训练来提升孩子英语应用能力的？",
+      "parts": [
+        {
+          "part_id": "part_1",
+          "chunk_id": "chunk37",
+          "scores": {
+            "relevance": 9,
+            "completeness": 7,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.5
+          },
+          "reason": "高度相关，从理念高度阐述了“以阅读为核心的重应用能力培养”，说明阅读应用如何促进整体水平提升。覆盖核心思想，完整性良好。准确忠实。"
+        },
+        {
+          "part_id": "part_2",
+          "chunk_id": "chunk23",
+          "scores": {
+            "relevance": 9,
+            "completeness": 6,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 8.3
+          },
+          "reason": "高度相关，具体描述了“强化阅读”、“补全对话”等阅读训练方式如何侧重应用能力培养。信息具体，完整性中等偏上。准确忠实。"
+        },
+        {
+          "part_id": "part_3",
+          "chunk_id": "chunk34",
+          "scores": {
+            "relevance": 8,
+            "completeness": 5,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.8
+          },
+          "reason": "相关性强，具体说明了如何通过“精准匹配”阅读材料（熟词率90%以上）来确保学生“读得懂、有应用环境”，是提升能力的前提。信息点关键，完整性中等。准确忠实。"
+        },
+        {
+          "part_id": "part_4",
+          "chunk_id": "chunk24",
+          "scores": {
+            "relevance": 7,
+            "completeness": 4,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 7.3
+          },
+          "reason": "讲“时文阅读”，是阅读训练应用能力的一种体现，相关性较好。未全面回答“怎么提升”，完整性中等偏下。准确忠实。"
+        },
+        {
+          "part_id": "part_5",
+          "chunk_id": "chunk35",
+          "scores": {
+            "relevance": 6,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.8
+          },
+          "reason": "提及“根据阅读能力匹配不同难度写作内容”，与阅读提升应用能力间接相关。非直接回答，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_6",
+          "chunk_id": "chunk31",
+          "scores": {
+            "relevance": 6,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.8
+          },
+          "reason": "阐述学习理念时提及“以阅读为核心”，与问题相关。未具体说明训练方法，完整性低。准确忠实。"
+        },
+        {
+          "part_id": "part_7",
+          "chunk_id": "chunk15",
+          "scores": {
+            "relevance": 5,
+            "completeness": 3,
+            "accuracy": 9,
+            "faithfulness": 9,
+            "part_avg": 6.5
+          },
+          "reason": "罗列阅读训练模块，与“怎么提升”问题间接相关。无方法描述，完整性低。准确忠实。"
+        }
+      ],
+      "q_avg_relevance": 7.1,
+      "q_avg_part_completeness": 4.4,
+      "q_merged_completeness": 9,
+      "q_avg_accuracy": 9.0,
+      "q_avg_faithfulness": 9.0,
+      "q_avg_part_score": 7.5,
+      "q_merged_completeness_reason": "合并后片段完整覆盖了关键信息点：系统通过以下方式提升应用能力：1) 理念核心：以阅读应用促进整体水平，以用促记；2) 前提保障：精准匹配确保文章可读性（熟词率90%+）；3) 具体方法：利用强化阅读提升分析和判断能力，通过补全对话锻炼语言组织、逻辑和交际能力，通过时文阅读扩充认知和信息量；4) 数据驱动：匹配个性化阅读材料。chunk37给出理念，chunk34给出前提，chunk23给出具体方法。",
+      "q_summary": "该问题下最优parts (chunk37, 23, 34) 分别从理念、具体方法和前提保障三个层次清晰地回答了问题，互补性强。其他parts价值递减。片段级完整性中等，但合并后完整性高，说明需结合多个片段才能从多个角度完整理解这一机制。整体覆盖度优秀。"
+    }
+  ]
+}
